@@ -20,18 +20,19 @@ namespace svc_usr.Controllers {
 
         [HttpPost("role")]
         public async Task<IActionResult> CreateRole([FromBody] CreateRoles roles) {
-            await Task.WhenAll(
-                roles.Roles.Select(r => { return AddRole(r); }).ToArray()
-            );
+            foreach(var role in roles.Roles) {
+                await AddRole(role);
+            }
 
             return Ok();
         }
 
         [HttpPut("role")]
         public async Task<IActionResult> AddUsersToRoles([FromBody]UsersRoles usersRoles){
-            await Task.WhenAll(
-                usersRoles.Users.Select(ur => { return AddUserToRoles(ur); })
-            );
+            foreach(var u in usersRoles.Users) {
+                await AddUserToRoles(u);
+            }
+            
             return Ok();
         }
 
@@ -45,15 +46,8 @@ namespace svc_usr.Controllers {
 
         private async Task AddUserToRoles(UserRoleData data) {
             Usr user = await _userManager.FindByNameAsync(data.Username) ?? await _userManager.FindByEmailAsync(data.Username);
-            await Task.WhenAll(
-                data.Roles.Select(r => { return AddUserToRole(user, r); }).ToArray()
-            );
-        }
-
-        private async Task AddUserToRole(Usr user, RoleData roleData) {
-            if(await _roleManager.RoleExistsAsync(roleData.Name)) {
-                await _userManager.AddToRoleAsync(user, roleData.Name);
-            }
+            var roles = data.Roles.Select(r => r.Name);
+            await _userManager.AddToRolesAsync(user, roles);
         }
     }
 }

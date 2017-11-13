@@ -105,7 +105,7 @@ namespace svc_usr.Controllers {
                 }.Intersect(request.GetScopes()));
             }
 
-            ticket.SetResources("resource-server");
+            ticket.SetResources("sillinquiry.io");
 
             foreach(var claim in ticket.Principal.Claims) {
                 if(claim.Type == _identityOptions.Value.ClaimsIdentity.SecurityStampClaimType) continue;

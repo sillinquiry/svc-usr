@@ -38,7 +38,7 @@ namespace svc_usr
             services.Configure<Services>(Configuration.GetSection("Services"));
 
             services.AddDbContext<UsrDbContext>(options => {
-                options.UseInMemoryDatabase(nameof(UsrDbContext));
+                options.UseMySql(Configuration["ConnectionStrings:Sillinquiry"]);
                 options.UseOpenIddict();
             });
 
@@ -75,7 +75,7 @@ namespace svc_usr
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
             }).AddJwtBearer(options => {
                 options.Authority = Configuration.GetSection("Services").GetValue("Identity", String.Empty);
-                options.Audience = "resource-server";
+                options.Audience = "sillinquiry.io";
                 options.RequireHttpsMetadata = false;
                 options.TokenValidationParameters = new TokenValidationParameters {
                     NameClaimType = OpenIdConnectConstants.Claims.Subject,
